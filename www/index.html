@@ -4,6 +4,7 @@
         <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
         <link rel="stylesheet" href="css/jquery.mobile.theme-1.4.5.min.css">
         <link rel="stylesheet" href="css/jquery.mobile.structure-1.4.5.min.css">
+        <link rel="stylesheet" href="css/common.css">
         <script type="text/javascript" src="js/libs/jquery-2.1.4.min.js"></script>
         <script type="text/javascript" src="js/libs/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/libs/knockout-3.4.0.js"></script>
@@ -25,22 +26,22 @@
         <div align="center">
             <a href="#popupRegist" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-star ui-btn-icon-left ui-btn-a" data-transition="pop">記録</a>
         </div>
-        <table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
-            <thead>
-                <tr>
-                    <th data-priority="1">出発</th>
-                    <th data-priority="1">経路</th>
-                    <th data-priority="1">到着</th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: items">
-                <tr>
-                    <th data-bind="text: startTime"></th>
-                    <td data-bind="text: location"></td>
-                    <td data-bind="text: arrivalTime"></td>
-                </tr>
-            </tbody>
-        </table>
+
+        <div data-bind="foreach: items">
+            <div class="landmark">
+                <span data-bind="if: $index()==0"><img src="img/home.png" class="icon-location"></span>
+                <span data-bind="if: $index()!=0"><img src="img/landmark.png" class="icon-location"></span>
+                <div class="timeInfo">
+                    <span data-bind="if: $index()!=0">到着:  <span data-bind="text: startTime"></span><br></span>
+                    出発:  <span data-bind="text: arrivalTime"></span>
+                </div>
+                <div class="locationInfo" data-bind="text: location">
+                </div>
+            </div>
+            <div class="moveInfo" data-bind="if: $parent.items().length - 1 > $index()">
+                <img src="img/car2.png" class="icon-move">Moving...(○分)
+            </div>
+        </div>
         <div data-role="popup" id="popupRegist" data-theme="a" class="ui-corner-all">
             <div style="padding:10px 20px;">
                 <h3>Let's Record!</h3>

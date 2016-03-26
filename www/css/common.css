@@ -1,0 +1,54 @@
+.landmark {
+	width: 100%;
+	height: auto;
+	padding: 0.5em 1em;
+	background-color: #F5F5F5;
+	border: 1px solid #DCDCDC;
+	border-radius: 0.5em;
+}
+
+img {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.icon-location {
+	width: 1.3em;
+	height: 1.3em;
+}
+
+.icon-move {
+	width: 3em;
+	height: 3em;
+}
+
+
+.timeInfo {
+	display: inline-block;
+	vertical-align: middle;
+	padding: 0px 5px;
+	font-size: 0.9em;
+	font-family: "メイリオ";
+}
+
+.locationInfo {
+	display: inline-block;
+	vertical-align: middle;
+	font-family: "メイリオ";
+	font-size: 1.3em;
+	text-decoration: underline;
+	font-weight: bold;
+	padding: 0px 10px;
+}
+
+.moveInfo {
+	display: inline-block;
+	font-family: "メイリオ";
+	width: 100%;
+	height: auto;
+	padding: 0em 1.3em;
+	display: table-cell;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
