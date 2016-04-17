@@ -29,27 +29,25 @@ var ViewModel = {
             { arrivalTime: rowdata.arrivalTime, location: ViewModel.inputLocation2(), departureTime: rowdata.departureTime });
         $.mobile.changePage('#main_screen');
     },
+    // メイン画面記録ボタンタップ時の処理
     record: function() {
-
-    var status = getEntriedStatus();
+        var status = getEntriedStatus();
 //alert('status:' + status + ', current_id:' + current_id);
-    switch (status) {
-        case 0:
-            $("#recordLocationDialog").popup("open");
-            break;
-        case 1:
-            //出発時刻入力
-            var rowdata = ViewModel.items()[current_id];
-            ViewModel.items.splice(current_id, 1,
-                { arrivalTime: rowdata.arrivalTime, location: rowdata.location, departureTime: now() });
-            break;
-        case 2:
-            //到着時刻入力
-            ViewModel.items.push({ arrivalTime: now(), location: "", departureTime: "" });
-            break;
-    }
-
-
+        switch (status) {
+            case 0:
+                $("#recordLocationDialog").popup("open");
+                break;
+            case 1:
+                //出発時刻入力
+                var rowdata = ViewModel.items()[current_id];
+                ViewModel.items.splice(current_id, 1,
+                    { arrivalTime: rowdata.arrivalTime, location: rowdata.location, departureTime: now() });
+                break;
+            case 2:
+                //到着時刻入力
+                ViewModel.items.push({ arrivalTime: now(), location: "", departureTime: "" });
+                break;
+        }
     }
 };
 
@@ -62,27 +60,6 @@ function editRow(element) {
     current_id = element.id;
     $('#popupRegist').popup('open');
 }
-
-// メイン画面記録ボタンタップ時の処理
-//function record() {
-//    var status = getEntriedStatus();
-//alert('status:' + status + ', current_id:' + current_id);
-//    switch (status) {
-//        case 0:
-//            $("#recordLocationDialog").popup("open");
-//            break;
-//        case 1:
-//            //出発時刻入力
-//            var rowdata = ViewModel.items()[current_id];
-//            ViewModel.items.splice(current_id, 1,
-//                { arrivalTime: rowdata.arrivalTime, location: rowdata.location, departureTime: now() });
-//            break;
-//        case 2:
-//            //到着時刻入力
-//            ViewModel.items.push({ arrivalTime: now(), location: "", departureTime: "" });
-//            break;
-//    }
-//}
 
 // 現在の入力済み状態を取得
 function getEntriedStatus() {
