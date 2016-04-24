@@ -21,7 +21,10 @@
         </div>
 
         <div data-bind="foreach: items">
-            <div class="landmark" data-bind="attr: {id: $index}" onClick="editRow(this);">
+            <div class="moveInfo" data-bind="if: $index()!=0">
+                <img src="img/car2.png" class="icon-move">移動...(<span data-bind="text: movingTime"></span>)
+            </div>
+            <div class="landmark" data-bind="attr: {id: $index}, click: $parent.editRow">
                 <span data-bind="if: $index()==0"><img src="img/home.png" class="icon-location"></span>
                 <span data-bind="if: $index()!=0"><img src="img/landmark.png" class="icon-location"></span>
                 <div class="timeInfo">
@@ -30,9 +33,6 @@
                 </div>
                 <div class="locationInfo" data-bind="text: location">
                 </div>
-            </div>
-            <div class="moveInfo" data-bind="if: $parent.items().length - 1 > $index()">
-                <img src="img/car2.png" class="icon-move">Moving...(○分)
             </div>
         </div>
         <div data-role="popup" id="popupRegist" data-theme="a" class="ui-corner-all">
