@@ -13,11 +13,29 @@ var EntriedColumnStatus = {
     DepartureTime: 2    // 出発時刻まで入力済
 };
 
+// カスタムバインディング登録
+ko.bindingHandlers.date = {
+    update: function(element, valueAccessor, allBindings) {
+        return ko.bindingHandlers.text.update(element, function() {
+            var value = ko.utils.unwrapObservable(valueAccessor());
+
+            if (value == null) {
+                return null;
+            }
+            if (typeof value === "string") {
+                return value;
+            }
+            return value.format('HH:mm');
+
+        }, allBindings, null, null);
+    }
+};
+
 var ViewModel = {
     items: ko.observableArray([
-        { arrivalTime: "09:00", location: "渋谷", departureTime: "10:05", movingTime: "" },
-        { arrivalTime: "10:21", location: "横浜", departureTime: "12:30", movingTime: "0:16" },
-        { arrivalTime: "13:05", location: "平塚", departureTime: "15:00", movingTime: "0:35" },
+        { arrivalTime: moment("09:00", "HH:mm"), location: "渋谷", departureTime: moment("10:05", "HH:mm"), movingTime: "" },
+        { arrivalTime: moment("10:21", "HH:mm"), location: "横浜", departureTime: moment("12:30", "HH:mm"), movingTime: "0:16" },
+        { arrivalTime: moment("13:05", "HH:mm"), location: "平塚", departureTime: moment("14:30", "HH:mm"), movingTime: "0:35" },
     ]),
     inputArrivalTime: ko.observable(""),
     inputDepartureTime: ko.observable(""),
@@ -25,9 +43,13 @@ var ViewModel = {
     inputLocation2: ko.observable("Sample2"),
     // 経由地編集ダイアログで登録ボタンタップ時の処理
     updateRow: function() {
+        var previous_rowdata = ViewModel.items()[current_id - 1];
+        var previous_departure = moment(previous_rowdata.departureTime);
+        var arrival = moment(ViewModel.inputArrivalTime(), "HH:mm");
+        var departure = moment(ViewModel.inputDepartureTime(), "HH:mm");
         ViewModel.items.splice(current_id, 1,
-            { arrivalTime: ViewModel.inputArrivalTime(), location: ViewModel.inputLocation(),
-            departureTime: ViewModel.inputDepartureTime(), movingTime: getMovingTime() });
+            { arrivalTime: arrival, location: ViewModel.inputLocation(),
+              departureTime: departure, movingTime: getDifferenceMinutes(arrival, previous_departure) });
         $.mobile.changePage('#main_screen');
     },
     // 経由地名称更新ダイアログで登録ボタンタップ時の処理
@@ -35,7 +57,7 @@ var ViewModel = {
         var rowdata = ViewModel.items()[current_id];
         ViewModel.items.splice(current_id, 1,
             { arrivalTime: rowdata.arrivalTime, location: ViewModel.inputLocation2(),
-            departureTime: rowdata.departureTime, movingTime: rowdata.movingTime });
+              departureTime: rowdata.departureTime, movingTime: rowdata.movingTime });
         $.mobile.changePage('#main_screen');
     },
     // メイン画面 記録ボタンタップ時の処理
@@ -49,26 +71,32 @@ var ViewModel = {
                 //出発時刻入力
                 var rowdata = ViewModel.items()[current_id];
                 ViewModel.items.splice(current_id, 1,
-                    { arrivalTime: rowdata.arrivalTime, location: rowdata.location, departureTime: now(), movingTime: rowdata.movingTime });
+                    { arrivalTime: rowdata.arrivalTime, location: rowdata.location, departureTime: moment(), movingTime: rowdata.movingTime });
                 break;
             case EntriedColumnStatus.DepartureTime:
                 //到着時刻入力
-                ViewModel.items.push({ arrivalTime: now(), location: "", departureTime: "", movingTime: getMovingTime() });
+                var previous_rowdata = ViewModel.items()[current_id];
+                var previous_departure = moment(previous_rowdata.departureTime);
+                var arrival = moment();
+                ViewModel.items.push({ arrivalTime: arrival, location: "", departureTime: "", movingTime: getDifferenceMinutes(arrival, previous_departure) });
                 break;
         }
     },
     // メイン画面 記録表の行タップ時の処理
     editRow: function(rowdata, event) {
         current_id = event.target.id;
-        ViewModel.inputArrivalTime(rowdata.arrivalTime);
+        ViewModel.inputArrivalTime(rowdata.arrivalTime.format("HH:mm"));
         ViewModel.inputLocation(rowdata.location);
-        ViewModel.inputDepartureTime(rowdata.departureTime);
+        if (rowdata.departureTime != "") {
+            ViewModel.inputDepartureTime(rowdata.departureTime.format("HH:mm"));
+        }
         $('#popupRegist').popup('open');
     }
 };
 
-function getMovingTime() {
-    return "AA:BB";
+function getDifferenceMinutes(a, b) {
+    var min = moment(a.diff(b));
+    return min.utc().format('HH:mm');
 }
 
 // 現在の入力済み状態を取得
@@ -95,8 +123,3 @@ function getEntriedStatus() {
     return -1;
 }
 
-// 現在時刻取得
-function now() {
-    var current = new Date();
-    return (current.getHours() + ':' + current.getMinutes());
-}

@@ -8,6 +8,7 @@
         <script type="text/javascript" src="js/libs/jquery-2.1.4.min.js"></script>
         <script type="text/javascript" src="js/libs/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/libs/knockout-3.4.0.js"></script>
+        <script type="text/javascript" src="js/libs/moment.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </head>
     <body>
@@ -28,8 +29,8 @@
                 <span data-bind="if: $index()==0"><img src="img/home.png" class="icon-location"></span>
                 <span data-bind="if: $index()!=0"><img src="img/landmark.png" class="icon-location"></span>
                 <div class="timeInfo">
-                    <span data-bind="if: $index()!=0">到着:  <span data-bind="text: arrivalTime"></span><br></span>
-                    出発:  <span data-bind="text: departureTime"></span>
+                    <span data-bind="if: $index()!=0">到着:  <span data-bind="date: arrivalTime"></span><br></span>
+                    出発:  <span data-bind="date: departureTime"></span>
                 </div>
                 <div class="locationInfo" data-bind="text: location">
                 </div>
