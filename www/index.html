@@ -8,51 +8,50 @@
         <script type="text/javascript" src="js/libs/jquery-2.1.4.min.js"></script>
         <script type="text/javascript" src="js/libs/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/libs/knockout-3.4.0.js"></script>
+        <script type="text/javascript" src="js/libs/moment.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-        /* Initial Process */
-        $(document).ready(function() {
-            /* Bind to ViewModel */
-            ko.applyBindings(ViewModel);
-        });
-        </script>
     </head>
     <body>
-    <div data-role="page">
+    <div data-role="page" id="main_screen">
         <div data-role="header">
             <h1>Page Title</h1>
             <a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-gear">Archive</a>
         </div>
         <div align="center">
-            <a href="#popupRegist" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-star ui-btn-icon-left ui-btn-a" data-transition="pop">記録</a>
+            <a href="#" data-bind="click: record" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-star ui-btn-icon-left ui-btn-a" data-transition="pop">記録</a>
         </div>
 
         <div data-bind="foreach: items">
-            <div class="landmark">
+            <div class="moveInfo" data-bind="if: $index()!=0">
+                <img src="img/car2.png" class="icon-move">移動...(<span data-bind="text: movingTime"></span>)
+            </div>
+            <div class="landmark" data-bind="attr: {id: $index}, click: $parent.editRow">
                 <span data-bind="if: $index()==0"><img src="img/home.png" class="icon-location"></span>
                 <span data-bind="if: $index()!=0"><img src="img/landmark.png" class="icon-location"></span>
                 <div class="timeInfo">
-                    <span data-bind="if: $index()!=0">到着:  <span data-bind="text: startTime"></span><br></span>
-                    出発:  <span data-bind="text: arrivalTime"></span>
+                    <span data-bind="if: $index()!=0">到着:  <span data-bind="date: arrivalTime"></span><br></span>
+                    出発:  <span data-bind="date: departureTime"></span>
                 </div>
                 <div class="locationInfo" data-bind="text: location">
                 </div>
-            </div>
-            <div class="moveInfo" data-bind="if: $parent.items().length - 1 > $index()">
-                <img src="img/car2.png" class="icon-move">Moving...(○分)
             </div>
         </div>
         <div data-role="popup" id="popupRegist" data-theme="a" class="ui-corner-all">
             <div style="padding:10px 20px;">
                 <h3>Let's Record!</h3>
-                <label for="sTime" class="ui-hidden-accessible">出発時間:</label>
-                <input type="text" name="startTime" id="sTime" value="" placeholder="出発時間" data-theme="a">
-                <label for="location" class="ui-hidden-accessible">経路:</label>
-                <input type="text" name="location" id="location" value="" placeholder="経路" data-theme="a">
                 <label for="aTime" class="ui-hidden-accessible">到着時間:</label>
-                <input type="text" name="arrivalTime" id="aTime" value="" placeholder="到着時間" data-theme="a">
-                <button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">登録</button>
+                <input type="text" name="arrivalTime" id="aTime" value="" placeholder="到着時間" data-theme="a" data-bind="value: inputArrivalTime">
+                <label for="location" class="ui-hidden-accessible">経由地:</label>
+                <input type="text" name="location" id="location" value="" placeholder="経由地" data-theme="a" data-bind="value: inputLocation">
+                <label for="sTime" class="ui-hidden-accessible">出発時間:</label>
+                <input type="text" name="departureTime" id="sTime" value="" placeholder="出発時間" data-theme="a" data-bind="value: inputDepartureTime">
+                <button type="submit" data-bind="click: updateRow" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">登録</button>
             </div>
+        </div>
+        <div data-role="popup" id="recordLocationDialog" title="経由地登録">
+            <label for="location2" class="ui-hidden-accessible">経由地:</label>
+            <input type="text" name="location" id="location2" value="" placeholder="経由地" data-theme="a" data-bind="value: inputLocation2">
+            <button type="submit" data-bind="click: updateLocation" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">登録</button>
         </div>
     </div>
     </body>
