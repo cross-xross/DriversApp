@@ -1,4 +1,3 @@
-
 /* Initial Process */
 $(document).ready(function() {
     /* Bind to ViewModel */
@@ -148,4 +147,3 @@ var ViewModel = {
         return -1;
     },
 };
-
