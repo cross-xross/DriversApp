@@ -9,13 +9,27 @@
         <script type="text/javascript" src="js/libs/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="js/libs/knockout-3.4.0.js"></script>
         <script type="text/javascript" src="js/libs/moment.min.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/lifecycle.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </head>
     <body>
-    <div data-role="page" id="main_screen">
+    <div id="deviceready"><div>
+    <!-- 初期画面 -->
+    <div data-role="page" id="hoge">
         <div data-role="header">
-            <h1>Page Title</h1>
-            <a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-gear">Archive</a>
+            <h1>ドライブ一覧</h1>
+            <a href="#" data-bind="click: showDetailTrip" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-plus">追加</a>
+        </div>
+        <div align="center">
+
+        </div>
+    </div>
+    <!-- 経路表示画面 -->
+    <div data-role="page" id="main_screen">
+        <div data-role="header" data-add-back-btn="true">
+            <h1>ドライブ詳細</h1>
+            <a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">保存</a>
         </div>
         <div align="center">
             <a href="#" data-bind="click: record" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-star ui-btn-icon-left ui-btn-a" data-transition="pop">記録</a>

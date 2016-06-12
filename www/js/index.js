@@ -20,6 +20,7 @@ var InputDataEntity = (function() {
 
 // メイン画面 記録表の入力状態
 var EntriedColumnStatus = {
+    FirstData: -1,      // 1件目のデータ
     ArrivalTime: 0,     // 到着時刻が入力済
     Location: 1,        // 経由地まで入力済
     DepartureTime: 2    // 出発時刻まで入力済
@@ -48,9 +49,9 @@ var ViewModel = {
     /** Route Information Data.
      */
     items: ko.observableArray([
-        new InputDataEntity(moment("09:00", "HH:mm"), "渋谷", moment("10:05", "HH:mm"), ""),
-        new InputDataEntity(moment("10:21", "HH:mm"), "横浜", moment("12:30", "HH:mm"), "0:16"),
-        new InputDataEntity(moment("13:05", "HH:mm"), "平塚", moment("14:30", "HH:mm"), "0:35"),
+        //new InputDataEntity(moment("09:00", "HH:mm"), "渋谷", moment("10:05", "HH:mm"), ""),
+        //new InputDataEntity(moment("10:21", "HH:mm"), "横浜", moment("12:30", "HH:mm"), "0:16"),
+        //new InputDataEntity(moment("13:05", "HH:mm"), "平塚", moment("14:30", "HH:mm"), "0:35"),
     ]),
 
     /** Tempolary Input Data.
@@ -61,25 +62,34 @@ var ViewModel = {
      */
     current_id: 0,
 
+    showDetailTrip: function() {
+        ViewModel.items([]);
+        ViewModel.current_id = 0;
+        $.mobile.changePage('#main_screen');
+    },
     // 経由地編集ダイアログで登録ボタンタップ時の処理
-    updateRow: function() {
+    updateRow: function(place) {
         var previous_rowdata   = ViewModel.items()[ViewModel.current_id - 1];
-        var previous_departure = moment(previous_rowdata.departureTime);
+        var previous_departure = moment(previous_rowdata.departureTime());
         var arrival            = moment(ViewModel.inputData.arrivalTime(), "HH:mm");
         var departure          = moment(ViewModel.inputData.departureTime(), "HH:mm");
         ViewModel.items.splice(ViewModel.current_id, 1, new InputDataEntity(arrival,
-                                                                    ViewModel.inputData.location,
+                                                                    ViewModel.inputData.location(),
                                                                     departure,
                                                                     ViewModel.__getDifferenceMinutes(arrival, previous_departure)));
         $.mobile.changePage('#main_screen');
     },
     // 経由地名称更新ダイアログで登録ボタンタップ時の処理
     updateLocation: function() {
-        var rowdata = ViewModel.items()[ViewModel.current_id];
-        ViewModel.items.splice(ViewModel.current_id, 1, new InputDataEntity(rowdata.arrivalTime(), 
+        if (ViewModel.current_id == 0) {
+            ViewModel.items.push(new InputDataEntity("", ViewModel.inputData.location(), moment(), ""));
+        } else  {
+            var rowdata = ViewModel.items()[ViewModel.current_id];
+            ViewModel.items.splice(ViewModel.current_id, 1, new InputDataEntity(rowdata.arrivalTime(), 
                                                                 ViewModel.inputData.location(),
-                                                                  rowdata.departureTime(),
-                                                                  rowdata.movingTime()));
+                                                                rowdata.departureTime(),
+                                                                rowdata.movingTime()));
+        }
         $.mobile.changePage('#main_screen');
     },
     // メイン画面 記録ボタンタップ時の処理
@@ -104,12 +114,18 @@ var ViewModel = {
                 var arrival            = moment();
                 ViewModel.items.push(new InputDataEntity(arrival, "", "", ViewModel.__getDifferenceMinutes(arrival, previous_departure)));
                 break;
+            case EntriedColumnStatus.FirstData:
+                $("#recordLocationDialog").popup("open");
+                //ViewModel.items.push(new InputDataEntity(moment("09:00", "HH:mm"), "渋谷", moment("10:05", "HH:mm"), ""));
+                break;
         }
     },
     // メイン画面 記録表の行タップ時の処理
     editRow: function(rowdata, event) {
         current_id = event.target.id;
-        ViewModel.inputData.arrivalTime(rowdata.arrivalTime().format("HH:mm"));
+        if (rowdata.arrivalTime() != "") {
+            ViewModel.inputData.arrivalTime(rowdata.arrivalTime().format("HH:mm"));
+        }
         ViewModel.inputData.location(rowdata.location());
         if (rowdata.departureTime != "") {
             ViewModel.inputData.departureTime(rowdata.departureTime().format("HH:mm"));
