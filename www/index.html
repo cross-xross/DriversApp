@@ -40,17 +40,17 @@
             <div style="padding:10px 20px;">
                 <h3>Let's Record!</h3>
                 <label for="aTime" class="ui-hidden-accessible">到着時間:</label>
-                <input type="text" name="arrivalTime" id="aTime" value="" placeholder="到着時間" data-theme="a" data-bind="value: inputArrivalTime">
+                <input type="text" name="arrivalTime" id="aTime" value="" placeholder="到着時間" data-theme="a" data-bind="value: inputData.arrivalTime">
                 <label for="location" class="ui-hidden-accessible">経由地:</label>
-                <input type="text" name="location" id="location" value="" placeholder="経由地" data-theme="a" data-bind="value: inputLocation">
+                <input type="text" name="location" id="location" value="" placeholder="経由地" data-theme="a" data-bind="value: inputData.location">
                 <label for="sTime" class="ui-hidden-accessible">出発時間:</label>
-                <input type="text" name="departureTime" id="sTime" value="" placeholder="出発時間" data-theme="a" data-bind="value: inputDepartureTime">
+                <input type="text" name="departureTime" id="sTime" value="" placeholder="出発時間" data-theme="a" data-bind="value: inputData.departureTime">
                 <button type="submit" data-bind="click: updateRow" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">登録</button>
             </div>
         </div>
         <div data-role="popup" id="recordLocationDialog" title="経由地登録">
             <label for="location2" class="ui-hidden-accessible">経由地:</label>
-            <input type="text" name="location" id="location2" value="" placeholder="経由地" data-theme="a" data-bind="value: inputLocation2">
+            <input type="text" name="location" id="location2" value="" placeholder="経由地" data-theme="a" data-bind="value: inputData.location">
             <button type="submit" data-bind="click: updateLocation" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">登録</button>
         </div>
     </div>
