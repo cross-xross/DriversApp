@@ -18,6 +18,16 @@ var InputDataEntity = (function() {
     return InputDataEntity;
 })();
 
+/**
+ */
+var DriveEntity = (function() {
+    var DriveEntity = function(name, create_data) {
+        this.name        = ko.observable(name);
+        this.create_data = ko.observable(create_data);
+    };
+    return DriveEntity;
+})();
+
 // メイン画面 記録表の入力状態
 var EntriedColumnStatus = {
     FirstData: -1,      // 1件目のデータ
@@ -46,13 +56,14 @@ ko.bindingHandlers.date = {
 /** Define ViewModel
  */
 var ViewModel = {
+
+    driveName: ko.observable(""),
+
+    driveList: ko.observableArray([]),
+
     /** Route Information Data.
      */
-    items: ko.observableArray([
-        //new InputDataEntity(moment("09:00", "HH:mm"), "渋谷", moment("10:05", "HH:mm"), ""),
-        //new InputDataEntity(moment("10:21", "HH:mm"), "横浜", moment("12:30", "HH:mm"), "0:16"),
-        //new InputDataEntity(moment("13:05", "HH:mm"), "平塚", moment("14:30", "HH:mm"), "0:35"),
-    ]),
+    items: ko.observableArray([]),
 
     /** Tempolary Input Data.
      */
@@ -62,21 +73,36 @@ var ViewModel = {
      */
     current_id: 0,
 
+    /**
+     */
     showDetailTrip: function() {
+        ViewModel.driveList.push(new DriveEntity(moment().format("YYYY年MM月DD日") + "のドライブ", moment()));
+    },
+    transitDetailPage: function() {
         ViewModel.items([]);
         ViewModel.current_id = 0;
         $.mobile.changePage('#main_screen');
     },
+    test: function() {
+        consolo.log("sample");
+    },
     // 経由地編集ダイアログで登録ボタンタップ時の処理
-    updateRow: function(place) {
-        var previous_rowdata   = ViewModel.items()[ViewModel.current_id - 1];
-        var previous_departure = moment(previous_rowdata.departureTime());
-        var arrival            = moment(ViewModel.inputData.arrivalTime(), "HH:mm");
-        var departure          = moment(ViewModel.inputData.departureTime(), "HH:mm");
-        ViewModel.items.splice(ViewModel.current_id, 1, new InputDataEntity(arrival,
-                                                                    ViewModel.inputData.location(),
-                                                                    departure,
-                                                                    ViewModel.__getDifferenceMinutes(arrival, previous_departure)));
+    updateRow: function() {
+        if (ViewModel.current_id == 0) {
+            ViewModel.items.splice(ViewModel.current_id, 1, new InputDataEntity("",
+                                                                        ViewModel.inputData.location(),
+                                                                        moment(ViewModel.inputData.departureTime(), "HH:mm"),
+                                                                        ""));            
+        } else {
+            var previous_rowdata   = ViewModel.items()[ViewModel.current_id - 1];
+            var previous_departure = moment(previous_rowdata.departureTime());
+            var arrival            = moment(ViewModel.inputData.arrivalTime(), "HH:mm");
+            var departure          = moment(ViewModel.inputData.departureTime(), "HH:mm");
+            ViewModel.items.splice(ViewModel.current_id, 1, new InputDataEntity(arrival,
+                                                                        ViewModel.inputData.location(),
+                                                                        departure,
+                                                                        ViewModel.__getDifferenceMinutes(arrival, previous_departure)));
+        }
         $.mobile.changePage('#main_screen');
     },
     // 経由地名称更新ダイアログで登録ボタンタップ時の処理
@@ -122,7 +148,7 @@ var ViewModel = {
     },
     // メイン画面 記録表の行タップ時の処理
     editRow: function(rowdata, event) {
-        current_id = event.target.id;
+        ViewModel.current_id = event.target.id;
         if (rowdata.arrivalTime() != "") {
             ViewModel.inputData.arrivalTime(rowdata.arrivalTime().format("HH:mm"));
         }
