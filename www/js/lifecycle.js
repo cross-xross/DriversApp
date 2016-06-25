@@ -53,8 +53,8 @@ var DatabaseManager = (function() {
     };
     // Execute DDL Query
     p.executeDdlQuery = function(tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS RouteInfos (id id, name, create_date)');
-        tx.executeSql('CREATE TABLE IF NOT EXISTS RoutePoints (id id, point_id, name, arrive_time, departure_time, memo)');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS RouteInfos (id integer autoincrement, name, create_date)');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS RoutePoints (id integer autoincrement, point_id, name, arrive_time, departure_time, memo)');
     };
     // Callback of failure
     p.onFailDdlQuery = function(tx, error) {

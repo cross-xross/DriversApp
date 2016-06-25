@@ -29,8 +29,7 @@ var Location = (function() {
         return new Location(this.arrivalTime(), this.locationName(), this.departureTime(), this.movingTime());
     }
 
-    p.setArrivalTime = function(input_arrivalTime, previous_location) {
-        this.arrivalTime(moment(input_arrivalTime, "HH:mm"));
+    p.updateMovingTime = function(previous_location) {
         if (previous_location != "") {
             this.movingTime(p.__getDifferenceMinutes(this.arrivalTime(), previous_location.departureTime()));
         }
@@ -44,6 +43,16 @@ var Location = (function() {
     }
 
     return Location;
+})();
+
+/**
+ */
+var DriveEntity = (function() {
+    var DriveEntity = function(name, create_data) {
+        this.name        = ko.observable(name);
+        this.create_data = ko.observable(create_data);
+    };
+    return DriveEntity;
 })();
 
 /**
@@ -101,9 +110,10 @@ var ViewModel = {
      */
     current_id: 0,
 
+    /**
+     */
     showDetailTrip: function() {
         ViewModel.driveList.push(new DriveEntity(moment().format("YYYY年MM月DD日") + "のドライブ", moment()));
-        $.mobile.changePage('#main_screen');
     },
     transitDetailPage: function() {
         ViewModel.LocationList([]);
@@ -115,25 +125,32 @@ var ViewModel = {
     },
     // 経由地情報変更（経由地編集ダイアログで登録ボタンクリック）
     updateRow: function(place) {
+        // 変更対象の経由地データを取得
         var current_location = ViewModel.LocationList()[ViewModel.current_id];
+        // 変更対象の一つ前の経由地データを取得
         var previous_location = "";
         if (ViewModel.current_id != 0) {
             var previous_location = ViewModel.LocationList()[ViewModel.current_id - 1];
         }
+
+        // 入力された到着時刻とそれから計算される移動時間を変更対象の経由地に反映
         var input_arrival = ViewModel.LocationOnDialog.arrivalTime();
         if (input_arrival != "") {
-            current_location.setArrivalTime(input_arrival, previous_location);
+            current_location.arrivalTime(moment(input_arrival, "HH:mm"));
+            current_location.updateMovingTime(previous_location);
         }
-
+        // 入力された経由地名称を変更対象の経由地に反映
         current_location.locationName(ViewModel.LocationOnDialog.locationName());
-
+        // 入力された出発時刻を変更対象の経由地に反映
         var input_departure = ViewModel.LocationOnDialog.departureTime();
         if (input_departure != "") {
             current_location.departureTime(moment(input_departure, "HH:mm"));
 
+            // 変更対象の経由地が最後のデータでない場合、次の経由地の移動時間を更新
             if (ViewModel.LocationList().length - 1 > ViewModel.current_id) {
-                var next_location = ViewModel.LocationList()[ViewModel.current_id + 1];
-                next_location.setArrivalTime(input_arrival, current_location);
+                var idx = ViewModel.current_id + 1;
+                var next_location = ViewModel.LocationList()[idx];
+                next_location.updateMovingTime(current_location);
             }
         }
 
@@ -164,10 +181,9 @@ var ViewModel = {
                 break;
             case EntriedColumnStatus.DepartureTime:
                 //到着時刻入力
-                var previous_location   = ViewModel.LocationList()[ViewModel.current_id];
-                var previous_departure = moment(previous_location.departureTime());
-                var arrival            = moment();
-                ViewModel.LocationList.push(new Location(arrival, "", "", previous_departure));
+                var previous_location = ViewModel.LocationList()[ViewModel.current_id];
+                var arrival           = moment();
+                ViewModel.LocationList.push(new Location(arrival, "", "", previous_location.departureTime()));
                 break;
             case EntriedColumnStatus.FirstData:
                 $("#recordLocationNameDialog").popup("open");
@@ -177,13 +193,16 @@ var ViewModel = {
     },
     // 経由地情報変更ダイアログ表示（メイン画面 記録表の行クリック）
     editRow: function(current_location, event) {
-        ViewModel.current_id = event.target.id;
+        ViewModel.current_id = parseInt(event.target.id);
+        // ダイアログの到着時刻初期値を設定
         var arrivalTime = "";
         if (current_location.arrivalTime() != "") {
             arrivalTime = current_location.arrivalTime().format("HH:mm");
         }
         ViewModel.LocationOnDialog.arrivalTime(arrivalTime);
+        // ダイアログの経由地名称初期値を設定
         ViewModel.LocationOnDialog.locationName(current_location.locationName());
+        // ダイアログの到着時刻初期値を設定
         var departureTime = "";
         if (current_location.departureTime() != "") {
             departureTime = current_location.departureTime().format("HH:mm");

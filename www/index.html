@@ -19,17 +19,19 @@
     <div data-role="page" id="hoge">
         <div data-role="header">
             <h1>ドライブ一覧</h1>
-            <a href="#" data-bind="click: showDetailTrip" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-plus">追加</a>
+            <a href="#" data-rel="popup" data-bind="click: showDetailTrip" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-plus" data-transition="pop">追加</a>
         </div>
         <div align="center">
-
+            <ul data-role="listview" data-bind="foreach: driveList">
+                <li data-bind="click: $parent.transitDetailPage"><a href="#"  data-bind="text: name"></a></li>
+            </ul>
         </div>
     </div>
     <!-- 経路表示画面 -->
     <div data-role="page" id="main_screen">
         <div data-role="header" data-add-back-btn="true">
             <h1>ドライブ詳細</h1>
-            <a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">保存</a>
+            <a href="#menuDialog" data-rel="popup" data-transit="pop" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-action">MENU</a>
         </div>
         <div align="center">
             <a href="#" data-bind="click: record" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-star ui-btn-icon-left ui-btn-a" data-transition="pop">記録</a>
@@ -50,6 +52,7 @@
                 </div>
             </div>
         </div>
+        <!-- 位置情報登録 -->
         <div data-role="popup" id="updateLocationDialog" data-theme="a" class="ui-corner-all">
             <div style="padding:10px 20px;">
                 <h3>Let's Record!</h3>
@@ -66,6 +69,12 @@
             <label for="location2" class="ui-hidden-accessible">経由地:</label>
             <input type="text" name="locationName" id="location2" value="" placeholder="経由地" data-theme="a" data-bind="value: LocationOnDialog.locationName">
             <button type="submit" data-bind="click: updateLocationName" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">登録</button>
+        </div>
+        <div data-role="popup" data-position-to="window" id="menuDialog" title="メニュー">
+            <div style="padding:10px 20px;">
+                <button class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-edit">保存</button>
+                <button class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete">削除</button>
+            </div>
         </div>
     </div>
     </body>
