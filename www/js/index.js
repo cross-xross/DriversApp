@@ -93,21 +93,18 @@ ko.bindingHandlers.date = {
 /** Define ViewModel
  */
 var ViewModel = {
-
+    // DriveName
     driveName: ko.observable(""),
-
+    // DriveList
     driveList: ko.observableArray([]),
 
-    /** Route Information Data.
-     */
+    // Route Information Data.
     LocationList: ko.observableArray([]),
 
-    /** Tempolary Input Data.
-     */
+    // Tempolary Input Data.
     LocationOnDialog: new Location("", "", "", ""),
 
-    /** Editing row number
-     */
+    // Editing row number
     current_id: 0,
 
     /**
@@ -209,6 +206,35 @@ var ViewModel = {
         }
         ViewModel.LocationOnDialog.departureTime(departureTime);
         $('#updateLocationDialog').popup('open');
+    },
+    exportCsv: function() {
+        var header = "到着時間\t場所\t出発時間\n";
+        var csvStr = "";
+        csvStr    += header;
+        for (var i = 0,  imax = ViewModel.LocationList().length - 1; i <= imax; ++i ) {
+            var rowData  = ViewModel.LocationList()[i];
+            var tempData = "";
+            if (rowData.arrivalTime() == "") {
+                tempData += "\t";
+            } else {
+                tempData += moment(rowData.arrivalTime(), "YYYY年MM月DD日 HH:mm").format("YYYY年MM月DD日 HH:mm")  + "\t" 
+            }
+            if (rowData.locationName() == "") {
+                tempData += "\t";
+            } else {
+                tempData += rowData.locationName() + "\t";
+            }
+            if (rowData.departureTime() == "") {
+                tempData += "\t"
+            } else {
+                tempData += moment(rowData.departureTime(), "YYYY年MM月DD日 HH:mm").format("YYYY年MM月DD日 HH:mm")
+            }
+            tempData += "\n";
+            csvStr += tempData;
+        } 
+        cordova.plugins.clipboard.copy(csvStr);
+        console.log(csvStr);
+        $.mobile.changePage('#main_screen');
     },
     /** [Private]
      */
